@@ -500,7 +500,9 @@ function serverInstructions(config: CodexProConfig): string {
   const bashInstruction =
     config.bashMode === "off"
       ? "5. Bash is disabled and the bash tool is unavailable. Do not attempt shell commands."
-      : "5. Use bash only for meaningful verification commands such as npm test, npm run build, lint, typecheck, or an existing project script.";
+      : config.bashMode === "full"
+        ? "5. Full shell mode permits authorized commands including Git commit/push, builds and tests. Set timeout_ms for long-running commands."
+        : "5. Use bash only for meaningful verification commands such as npm test, npm run build, lint, typecheck, or an existing project script.";
 
   return [
     "CodexPro connects ChatGPT to explicitly allowed local development workspaces.",
@@ -2200,8 +2202,9 @@ export function createCodexProServer(
     "bash",
     {
       title: "Bash",
-      description:
-        "Run one allowlisted verification command in the workspace, such as tests, build, lint, typecheck, or a project script. Do not use for git status/diff or file inspection; use show_changes, tree, search, and read instead. Do not chain commands with &&, pipes, redirects, or shell file readers.",
+      description: config.bashMode === "full"
+        ? "Run an authorized shell command in the selected workspace, including Git commit/push, builds and tests. Full shell mode is enabled. Set timeout_ms for long-running commands. Prefer file tools for file inspection and edits."
+        : "Run one allowlisted verification command in the workspace, such as tests, build, lint, typecheck, or a project script. Do not use for git status/diff or file inspection; use show_changes, tree, search, and read instead. Do not chain commands with &&, pipes, redirects, or shell file readers.",
       inputSchema: {
         workspace_id: z.string().optional().describe("Workspace id from open_workspace. Omit to use the workspace selected for this MCP session."),
         command: z.string().describe("Command to run."),

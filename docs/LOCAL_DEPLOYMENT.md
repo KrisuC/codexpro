@@ -234,6 +234,80 @@ images as well as exit codes. Test windows must be visible for desktop acceptanc
 `window-fixture.ps1` does not restore the clipboard or force prior-window focus
 on close. Its optional auto-close timer supports cleanup verification.
 
+## Ordinary Chat reliability (2026-10-02)
+
+Ordinary Chat is the target of this deployment. Running its UI on the same PC
+does not move the registered cloud plugin's MCP caller onto that PC. The current
+supported route for this private server remains the existing Secure MCP Tunnel.
+Codex-host stdio configuration is a different route and is not a drop-in
+replacement for an ordinary Chat plugin. Do not switch the user to Work, add an
+API-billed agent, or modify local Codex MCP settings to conceal this distinction.
+See [plugin connection requirements](https://developers.openai.com/plugins/deploy/connect-chatgpt)
+and [Codex-host MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
+
+Investigation found two distinct layers of problems:
+
+- The cloud app still stored 21 old tool definitions, including the safe-mode
+  shell description, although the live gateway exposed 72 tools and full shell.
+  Refresh the existing app's tools after descriptor changes; rebuilding the app
+  or changing its fixed tunnel identity is unnecessary. Old chats may retain
+  cached tool context. Confirm the selected plugin in a fresh ordinary Chat if
+  the current chat never attempts a tool call.
+- The gateway closed a backend for every thrown error, including invalid RPC
+  arguments and timeouts, discarded the reason, and imposed a fixed 120-second
+  timeout even when the shell accepted longer execution. A slow or invalid call
+  could therefore disrupt subsequent calls. Shared stdio also had one implicit
+  workspace selection for multiple chats, and some supertool calls bypassed the
+  outer gateway's configuration/discovery behavior.
+
+The repaired gateway keeps connections on parameter errors, cancellation and
+timeouts, reports a useful error category and diagnostic ID, and closes only
+the failed connection generation on confirmed transport closure. Only known
+read-only core operations with stable workspace identity can retry once. File
+writes, shell commands, clicks, typing and other mutations are never replayed.
+Shell timeout is the requested execution limit plus 15 seconds for the response,
+bounded by the supported shell maximum. Host/tunnel deadlines still apply;
+this is not a promise that ordinary Chat can wait indefinitely for a build.
+
+When `params._meta["openai/session"]` exists, its in-memory hash selects a bounded
+conversation-to-workspace map. A new conversation must select a workspace once;
+it cannot inherit another conversation's implicit selection. Explicit
+`workspace_id` remains the preferred way to survive restarts or context changes.
+Metadata-less clients retain MCP-session behavior and should always send IDs.
+The browser session and physical Windows desktop are still shared resources;
+conversation workspace handling is not desktop/browser isolation.
+
+`codexpro` with no action now returns the gateway catalog; core aliases also pass
+through its reliability handling. Discovery returns names, with one detailed
+schema available on demand. Its response decreased from 15,574 to 2,210 characters
+in this deployment. This reduces repeated tool-directory text; it does not prove
+a change in model reasoning quality or control the host's tool-context budget.
+The full-shell description now matches the permission actually enabled, and
+server instructions refer to the user-requested window rather than a test-only
+window.
+
+`diagnosticsDir` enables `gateway-<pid>.jsonl`, rotated at approximately 1 MiB with
+one previous copy per process. Records contain tool/backend names, timestamps,
+duration, error category and an opaque diagnostic ID. They never include tool
+arguments, results, raw errors, keys or conversation IDs. Use these records to
+distinguish an attempted failed call from a chat that never received/selected
+the plugin. `/readyz` alone only proves runtime readiness.
+
+The installed tunnel client was already the latest published 0.0.15 when checked.
+Its running instance showed two failed polls among roughly 2,200 polls at the
+initial check; that does not explain every reported chat failure. Its documented
+10-minute connection TTL is a per-request forwarding window, not a demonstrated
+10-minute idle-disconnect timer. Avoid speculative TTL changes or repeated
+restarts as a substitute for identifying the failing layer.
+
+`node deployment/tests/verify-reliability.mjs` uses disposable synthetic backends
+to test invalid arguments, an actual request timeout with concurrent work,
+longer shell deadlines, interleaved conversation selections, backend exit,
+read-only recovery, non-replayed mutations, wrapper compatibility and private
+diagnostics. The original deployed gateway fails the error-handling regression;
+the repaired gateway passes. Production acceptance separately uses real app
+calls and the existing app's refreshed cloud tool catalog.
+
 ## Rollback and disable
 
 For an integration problem, disable only `windows` or `playwright` using the

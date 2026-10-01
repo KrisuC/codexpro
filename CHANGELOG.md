@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Preserve healthy MCP backend connections on argument errors, timeouts and cancellation; recover a closed connection only for known read-only calls with stable workspace identity, without replaying mutations.
+- Honor shell execution timeouts, keep workspace selection per ChatGPT conversation when metadata is supplied, and make supertool defaults/aliases use the complete gateway catalog.
+- Correct full-shell tool descriptions, shorten action discovery, and record bounded metadata-only failure diagnostics.
+
 - Add a documented Windows private-stdio deployment overlay with pinned desktop/browser integrations, restricted child environments, independently disabled backends, and compatibility through the existing CodexPro supertool.
 - Scope desktop UI collection before traversal, require explicit screenshot regions, and fix clipboard/focus cleanup in the synthetic acceptance window.
 - Refresh vulnerable transitive dependency pins and quote the Node executable in the Windows handoff smoke fixture.

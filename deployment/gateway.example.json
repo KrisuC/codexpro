@@ -1,4 +1,5 @@
 {
+  "diagnosticsDir": "<PRIVATE_ROOT>\\logs",
   "allowedRoots": [
     "C:\\Projects\\example-default",
     "C:\\Projects\\example-a",
