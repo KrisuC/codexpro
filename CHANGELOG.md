@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a documented Windows private-stdio deployment overlay with pinned desktop/browser integrations, restricted child environments, independently disabled backends, and compatibility through the existing CodexPro supertool.
+- Scope desktop UI collection before traversal, require explicit screenshot regions, and fix clipboard/focus cleanup in the synthetic acceptance window.
+- Refresh vulnerable transitive dependency pins and quote the Node executable in the Windows handoff smoke fixture.
+
 ## 0.30.2 (2026-09-20)
 
 - Read the runtime and MCP server version from package metadata so release entrypoints cannot drift from `package.json`.

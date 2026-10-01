@@ -180,6 +180,9 @@ Restart `codexpro start` after updating. Saved profiles under `~/.codexpro` stay
 
 ## Development
 
+For the maintained Windows private-tunnel overlay with optional desktop and
+isolated browser tools, see [local deployment and acceptance](docs/LOCAL_DEPLOYMENT.md).
+
 ```bash
 npm install
 npm run build

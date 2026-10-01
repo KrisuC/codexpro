@@ -1,0 +1,141 @@
+{
+  "allowedRoots": [
+    "C:\\Projects\\example-default",
+    "C:\\Projects\\example-a",
+    "C:\\Projects\\example-b",
+    "C:\\Projects\\example-c"
+  ],
+  "backends": {
+    "playwright": {
+      "command": "<PRIVATE_ROOT>\\bin\\node.exe",
+      "env": {
+        "DO_NOT_TRACK": "1",
+        "OTEL_SDK_DISABLED": "true"
+      },
+      "args": [
+        "<PRIVATE_ROOT>\\bridge\\node_modules\\@playwright\\mcp\\cli.js",
+        "--browser",
+        "msedge",
+        "--isolated",
+        "--headless",
+        "--no-webmcp",
+        "--block-service-workers",
+        "--caps",
+        "vision,devtools",
+        "--output-dir",
+        "<PRIVATE_ROOT>\\playwright-artifacts",
+        "--output-max-size",
+        "16777216",
+        "--console-level",
+        "warning"
+      ],
+      "cwd": "<PRIVATE_ROOT>\\artifacts",
+      "prefix": "pw_",
+      "catalog": "<PRIVATE_ROOT>\\catalogs\\playwright.json",
+      "enabled": true,
+      "tools": [
+        "browser_close",
+        "browser_resize",
+        "browser_console_messages",
+        "browser_resume",
+        "browser_highlight",
+        "browser_hide_highlight",
+        "browser_annotate",
+        "browser_handle_dialog",
+        "browser_emulate_media",
+        "browser_evaluate",
+        "browser_file_upload",
+        "browser_drop",
+        "browser_find",
+        "browser_fill_form",
+        "browser_press_key",
+        "browser_type",
+        "browser_mouse_move_xy",
+        "browser_mouse_click_xy",
+        "browser_mouse_drag_xy",
+        "browser_mouse_down",
+        "browser_mouse_up",
+        "browser_mouse_wheel",
+        "browser_navigate",
+        "browser_navigate_back",
+        "browser_network_requests",
+        "browser_network_request",
+        "browser_take_screenshot",
+        "browser_snapshot",
+        "browser_click",
+        "browser_drag",
+        "browser_hover",
+        "browser_select_option",
+        "browser_tabs",
+        "browser_wait_for"
+      ]
+    },
+    "windows": {
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "OTEL_SDK_DISABLED": "true",
+        "ANONYMIZED_TELEMETRY": "false",
+        "PYTHONUTF8": "1"
+      },
+      "cwd": "<PRIVATE_ROOT>",
+      "command": "<PRIVATE_ROOT>\\windows-mcp-venv\\Scripts\\python.exe",
+      "args": [
+        "<PRIVATE_ROOT>\\bridge\\windows-launcher.py",
+        "serve",
+        "--transport",
+        "stdio",
+        "--config",
+        "<PRIVATE_ROOT>\\config\\windows-mcp.toml"
+      ],
+      "prefix": "windows_",
+      "catalog": "<PRIVATE_ROOT>\\catalogs\\windows.json",
+      "enabled": true,
+      "tools": [
+        "App",
+        "DisplayInventory",
+        "Snapshot",
+        "Screenshot",
+        "Click",
+        "Type",
+        "Scroll",
+        "Move",
+        "Shortcut",
+        "Wait",
+        "WaitFor",
+        "MultiSelect",
+        "MultiEdit",
+        "Clipboard",
+        "Process"
+      ]
+    },
+    "codexpro": {
+      "args": [
+        "<PRIVATE_ROOT>\\core\\dist\\stdio.js",
+        "--root",
+        "C:\\Projects\\example-default",
+        "--bash",
+        "full",
+        "--write",
+        "workspace",
+        "--tool-mode",
+        "standard",
+        "--codex-sessions",
+        "off",
+        "--allow-root",
+        "C:\\Projects\\example-a",
+        "--allow-root",
+        "C:\\Projects\\example-b",
+        "--allow-root",
+        "C:\\Projects\\example-c"
+      ],
+      "cwd": "C:\\Projects\\example-default",
+      "prefix": "",
+      "command": "<PRIVATE_ROOT>\\bin\\node.exe",
+      "env": {
+        "CODEXPRO_INHERIT_ENV": "0"
+      },
+      "catalog": "<PRIVATE_ROOT>\\catalogs\\codexpro.json",
+      "enabled": true
+    }
+  }
+}

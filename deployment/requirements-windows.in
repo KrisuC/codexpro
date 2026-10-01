@@ -1,0 +1,3 @@
+windows-mcp==0.8.7
+# Upstream constrains this package to include its security fixes.
+pydantic-settings>=2.14.2

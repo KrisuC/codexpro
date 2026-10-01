@@ -1,0 +1,7 @@
+{
+  "client": "<PRIVATE_ROOT>\\bin\\tunnel-client.exe",
+  "alias": "codexpro-private",
+  "tunnelId": "<EXISTING_TUNNEL_ID>",
+  "node": "<PRIVATE_ROOT>\\bin\\node.exe",
+  "taskName": "CodexProPrivateTunnel"
+}
