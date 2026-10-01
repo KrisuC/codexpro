@@ -310,6 +310,25 @@ calls and the existing app's refreshed cloud tool catalog.
 
 ## Rollback and disable
 
+### Choose a project
+
+Multiple approved workspaces can remain open. Each file operation belongs to one
+workspace; an absolute path into another approved root does not override the
+supplied `workspace_id`. `Path escapes workspace root` means the project ID and
+path do not match, not that the server disconnected or supports only one project.
+Call `open_workspace` with the intended `root`, retain its returned ID, and use
+relative paths within that project. A chat using explicit old IDs keeps targeting
+those old projects until it switches.
+
+For temporary chat-level changes, call `open_workspace`; no service restart is
+needed. To change the persistent startup default locally, run the protected
+`scripts/set-default-workspace.ps1`, either without arguments for a numbered menu
+or with `-Root` naming an already-approved project. It backs up the private
+configuration, preserves every approved root and shell mode, and restarts the
+managed service once. It does not change the tunnel identity, edit other saved
+profiles, grant new paths, or replace project selections in other chats. Local
+launchers can invoke this script with Windows PowerShell; no token is needed.
+
 For an integration problem, disable only `windows` or `playwright` using the
 supertool, or edit that backend's private `enabled` flag and restart. Core shell,
 project access and the fixed ChatGPT app remain available.
