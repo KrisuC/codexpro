@@ -310,6 +310,20 @@ calls and the existing app's refreshed cloud tool catalog.
 
 ## Rollback and disable
 
+### Manage approved directories locally
+
+The protected `scripts/manage-directories.ps1` provides a Chinese menu to list,
+add or remove approved project directories. A local CMD can invoke it; for the
+consolidated installation, `C:\CodexPro\manage-codexpro-directories.cmd` and its
+Chinese alias are the entrypoints. Adding resolves an existing absolute folder;
+removing changes permissions without deleting the project. At least one project
+must remain. Removing the default requires selecting a remaining default.
+
+The editor backs up configuration, preserves other backend settings, updates
+both MCP roots and core CLI flags, and restarts the managed service. Failed
+startup restores the previous configuration. The roots govern project file tools;
+full shell and desktop tools retain the Windows user's existing authority.
+
 ### Choose a project
 
 Multiple approved workspaces can remain open. Each file operation belongs to one
