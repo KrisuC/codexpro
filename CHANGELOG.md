@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Hide automatic Windows startup and all Git/search/patch subprocesses; align tunnel routing with Windows proxy settings and check successful polling before reporting online.
+- Protect active operations during background network recovery and verify recovery through real plugin calls.
+
 - Preserve healthy MCP backend connections on argument errors, timeouts and cancellation; recover a closed connection only for known read-only calls with stable workspace identity, without replaying mutations.
 - Honor shell execution timeouts, keep workspace selection per ChatGPT conversation when metadata is supplied, and make supertool defaults/aliases use the complete gateway catalog.
 - Correct full-shell tool descriptions, shorten action discovery, and record bounded metadata-only failure diagnostics.

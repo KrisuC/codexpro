@@ -59,10 +59,10 @@ was visible. This was verified with a read-only task probe rather than inferred
 from the displayed path.
 
 Use one existing scheduled task, running as the interactive user with **Limited**
-privileges at logon, no execution time limit, and a hidden PowerShell supervisor:
+privileges at logon, no execution time limit, and a GUI host for the hidden PowerShell supervisor:
 
 ```powershell
-powershell.exe -NoProfile -WindowStyle Hidden -File <PRIVATE_ROOT>\scripts\service.ps1
+wscript.exe //B //Nologo "<PRIVATE_ROOT>\scripts\service-host.vbs"
 ```
 
 The supervisor retries every 15 seconds, uses a per-user mutex, recovers a stopped
@@ -307,6 +307,37 @@ read-only recovery, non-replayed mutations, wrapper compatibility and private
 diagnostics. The original deployed gateway fails the error-handling regression;
 the repaired gateway passes. Production acceptance separately uses real app
 calls and the existing app's refreshed cloud tool catalog.
+
+## Background windows and network freshness
+
+The GUI `service-host.vbs` hides PowerShell at process creation and waits for the
+supervisor, so the scheduled task stays Running. Management helpers use explicit
+hidden startup. The connect helper preserves the supervisor's hidden console for
+tunnel-client's managed child to inherit; upstream 0.0.15 does not set detached
+Windows creation flags. Stop commands use no-console execution. Git, patch and
+search subprocesses set `windowsHide`, including `where` and version detection.
+The supervisor records only whether its own console is visible; no other window
+names or desktop content are collected by this check.
+
+The tunnel control plane follows an explicitly configured proxy, an existing
+control-plane proxy environment setting, or Windows' enabled static HTTP/HTTPS
+proxy. It does not change Windows proxy settings or forward tunnel credentials
+to MCP backends. The observed problem included sustained direct-route poll
+failures while local readiness still returned HTTP 200.
+
+Startup and recovery now inspect the last successful poll metric. A local 200
+with a stale poll is reported degraded, not online; the first poll gets a startup
+grace period. Recovery is rate-limited and deferred for active or recently timed
+out/cancelled operations whose effects may be unknown. It never replays tool
+calls. Logs and `logs/service-health.json` expose the actual connection state.
+
+`verify-background-health.ps1 -Helpers <PRIVATE_ROOT>\scripts\process-utils.ps1`
+checks fresh/stale poll classification, active-call protection and hidden process
+execution. Deployment acceptance additionally stopped only an idle managed
+runtime, observed background recovery with a hidden supervisor console, and
+successfully read the default project through the real plugin afterward. This
+bounded test does not assert that every possible future network outage or an
+unrelated application's terminal is fixed.
 
 ## Rollback and disable
 

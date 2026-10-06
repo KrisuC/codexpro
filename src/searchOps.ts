@@ -39,7 +39,7 @@ export interface SearchBackendStatus {
 function commandExists(command: string): Promise<boolean> {
   return new Promise((resolve) => {
     const child = process.platform === "win32"
-      ? spawn("where", [command], { stdio: "ignore", shell: false })
+      ? spawn("where", [command], { stdio: "ignore", shell: false, windowsHide: true })
       : spawn("/bin/sh", ["-lc", `command -v ${command} >/dev/null 2>&1`], { stdio: "ignore" });
     child.on("close", (code) => resolve(code === 0));
     child.on("error", () => resolve(false));
@@ -49,7 +49,7 @@ function commandExists(command: string): Promise<boolean> {
 function commandPath(command: string): Promise<string | undefined> {
   return new Promise((resolve) => {
     const child = process.platform === "win32"
-      ? spawn("where", [command], { stdio: ["ignore", "pipe", "ignore"], shell: false })
+      ? spawn("where", [command], { stdio: ["ignore", "pipe", "ignore"], shell: false, windowsHide: true })
       : spawn("/bin/sh", ["-lc", `command -v ${command}`], { stdio: ["ignore", "pipe", "ignore"] });
     let output = "";
     child.stdout?.on("data", (chunk) => { output += String(chunk); });
@@ -60,7 +60,7 @@ function commandPath(command: string): Promise<string | undefined> {
 
 function commandVersion(command: string): Promise<string | undefined> {
   return new Promise((resolve) => {
-    const child = spawn(command, ["--version"], { stdio: ["ignore", "pipe", "ignore"], shell: false });
+    const child = spawn(command, ["--version"], { stdio: ["ignore", "pipe", "ignore"], shell: false, windowsHide: true });
     let output = "";
     child.stdout?.on("data", (chunk) => { output += String(chunk); });
     child.on("close", (code) => resolve(code === 0 ? output.split(/\r?\n/).find(Boolean)?.trim() : undefined));
@@ -117,7 +117,7 @@ async function runRipgrep(config: CodexProConfig, guard: PathGuard, workspace: W
   args.push("-e", options.query, "--", target.absPath);
 
   return new Promise((resolve, reject) => {
-    const child = spawn("rg", args, { cwd: workspace.root, env: { ...process.env, NO_COLOR: "1" } });
+    const child = spawn("rg", args, { cwd: workspace.root, env: { ...process.env, NO_COLOR: "1" }, windowsHide: true });
     let stdout = "";
     let stderr = "";
     let outputLimited = false;

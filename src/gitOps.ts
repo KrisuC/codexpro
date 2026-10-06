@@ -83,7 +83,8 @@ function nearestGitContext(config: CodexProConfig, guard: PathGuard, workspace: 
     cwd: probe,
     encoding: "utf8",
     maxBuffer: config.maxOutputBytes,
-    env: { ...process.env, NO_COLOR: "1" }
+    env: { ...process.env, NO_COLOR: "1" },
+    windowsHide: true
   });
   if (result.error || result.status !== 0) return { ...defaultGitContext(workspace), targetPath: resolved.relPath };
   const rootText = String(result.stdout ?? "").trim();
@@ -126,7 +127,8 @@ function runGit(config: CodexProConfig, workspace: Workspace, args: string[], ma
     cwd: context.cwd,
     encoding: "utf8",
     maxBuffer: maxOutputBytes,
-    env: { ...process.env, NO_COLOR: "1" }
+    env: { ...process.env, NO_COLOR: "1" },
+    windowsHide: true
   });
   if (result.error) {
     return `git unavailable or failed: ${result.error.message}`;
